@@ -87,7 +87,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
     _cameraController = CameraController(
       cameras![_selectedCameraIndex],
-      ResolutionPreset.medium,
+      ResolutionPreset.max,
       enableAudio: false,
     );
 
@@ -105,7 +105,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
     _cameraController = CameraController(
       cameras![_selectedCameraIndex],
-      ResolutionPreset.medium,
+      ResolutionPreset.max,
       enableAudio: false,
     );
     await _cameraController!.initialize();
@@ -160,9 +160,10 @@ class _CameraScreenState extends State<CameraScreen> {
                 : Center(child: CircularProgressIndicator()))
                 : Image.memory(
               _imageBytes!,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
               width: double.infinity,
               height: double.infinity,
+              alignment: Alignment.center,
             ),
           ),
 
