@@ -20,6 +20,14 @@ class _CameraScreenState extends State<CameraScreen> {
   List<CameraDescription>? cameras;
   int _selectedCameraIndex = 0;
 
+  final TransformationController _transformationController = TransformationController();
+  double _currentScale = 1.0;
+
+  void _resetZoom() {
+    _transformationController.value = Matrix4.identity();
+    _currentScale = 1.0;
+  }
+
   final ImagePicker _picker = ImagePicker();
   final ApiService _apiService = ApiService();
   bool _isProcessing = false;
@@ -82,7 +90,7 @@ class _CameraScreenState extends State<CameraScreen> {
     if (cameras == null || cameras!.length < 2) return;
 
     _selectedCameraIndex = (_selectedCameraIndex + 1) % cameras!.length;
-
+    _resetZoom();
     await _cameraController?.dispose();
 
     _cameraController = CameraController(
@@ -102,6 +110,7 @@ class _CameraScreenState extends State<CameraScreen> {
   Future<void> initializeCamera() async {
     cameras = await availableCameras();
     if (cameras!.isEmpty) return;
+    _resetZoom();
 
     _cameraController = CameraController(
       cameras![_selectedCameraIndex],
@@ -114,8 +123,15 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Future<void> captureImage() async {
     if (_cameraController != null) {
+      try {
+        final zoom = _transformationController.value.getMaxScaleOnAxis();
+        await _cameraController!.setZoomLevel(zoom);
+      } catch (e) {
+        print('Zoom not supported: $e');
+      }
       final image = await _cameraController!.takePicture();
       final imageBytes = await image.readAsBytes();
+      _resetZoom();
 
       await _cameraController!.dispose();
       _cameraController = null;
@@ -131,6 +147,7 @@ class _CameraScreenState extends State<CameraScreen> {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       final imageBytes = await pickedFile.readAsBytes();
+      _resetZoom();
       setState(() {
         _imageFile = XFile(pickedFile.path);
         _imageBytes = imageBytes;
@@ -156,15 +173,20 @@ class _CameraScreenState extends State<CameraScreen> {
           Positioned.fill(
             child: _imageBytes == null
                 ? (_cameraController != null && _cameraController!.value.isInitialized
-                ? CameraPreview(_cameraController!)
-                : Center(child: CircularProgressIndicator()))
-                : Image.memory(
-              _imageBytes!,
-              fit: BoxFit.contain,
-              width: double.infinity,
-              height: double.infinity,
-              alignment: Alignment.center,
-            ),
+                ? InteractiveViewer(
+                    transformationController: _transformationController,
+                    minScale: 1.0,
+                    maxScale: 4.0,
+                    child: CameraPreview(_cameraController!),
+            )
+                : const Center(child: CircularProgressIndicator()))
+                :  Image.memory(
+                  _imageBytes!,
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  height: double.infinity,
+                  alignment: Alignment.center,
+            )
           ),
 
           Positioned(
@@ -172,10 +194,10 @@ class _CameraScreenState extends State<CameraScreen> {
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0),
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.4), // Semi-transparent overlay
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: _imageFile == null
                   ? Row(
@@ -247,6 +269,7 @@ class _CameraScreenState extends State<CameraScreen> {
                     padding: EdgeInsets.only(left: screenWidth * 0.15),
                     child: ElevatedButton(
                       onPressed: () async {
+                        _resetZoom();
                         setState(() {
                           _imageFile = null;
                           _imageBytes = null;
@@ -270,7 +293,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       onPressed: _isProcessing ? null : _processAndNavigate,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
