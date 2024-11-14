@@ -9,13 +9,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiService {
   static String baseUrl = dotenv.env['BACKEND_BASE_URL'] ?? '';
-  static String token = dotenv.env['TOKEN'] ?? '';
 
   Future<Map<String, dynamic>> getUploadUrl() async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/assets/upload'),
-        headers: {'Content-Type': 'application/json', 'Authorization':'Token $token'},
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({
           "entity_type": "clothing",
           "content_type": "image/jpeg"
@@ -62,7 +61,6 @@ class ApiService {
         uri,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Token $token'
         },
       );
 
