@@ -176,7 +176,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 ? InteractiveViewer(
                     transformationController: _transformationController,
                     minScale: 1.0,
-                    maxScale: 4.0,
+                    maxScale: 10.0,
                     child: CameraPreview(_cameraController!),
             )
                 : const Center(child: CircularProgressIndicator()))
