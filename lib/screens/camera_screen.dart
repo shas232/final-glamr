@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:final_glamr/services/search_api.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:final_glamr/screens/ResultsScreen.dart';
 
@@ -22,11 +20,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
   final TransformationController _transformationController = TransformationController();
   double _currentScale = 1.0;
-
-  void _resetZoom() {
-    _transformationController.value = Matrix4.identity();
-    _currentScale = 1.0;
-  }
 
   final ImagePicker _picker = ImagePicker();
   final ApiService _apiService = ApiService();
@@ -90,7 +83,6 @@ class _CameraScreenState extends State<CameraScreen> {
     if (cameras == null || cameras!.length < 2) return;
 
     _selectedCameraIndex = (_selectedCameraIndex + 1) % cameras!.length;
-    _resetZoom();
     await _cameraController?.dispose();
 
     _cameraController = CameraController(
@@ -101,7 +93,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
     try {
       await _cameraController!.initialize();
-      if (mounted) setState(() {});
+      await _cameraController!.setZoomLevel(_currentScale);
+      setState(() {});
     } catch (e) {
       print('Error switching camera: $e');
     }
@@ -110,7 +103,6 @@ class _CameraScreenState extends State<CameraScreen> {
   Future<void> initializeCamera() async {
     cameras = await availableCameras();
     if (cameras!.isEmpty) return;
-    _resetZoom();
 
     _cameraController = CameraController(
       cameras![_selectedCameraIndex],
@@ -118,36 +110,33 @@ class _CameraScreenState extends State<CameraScreen> {
       enableAudio: false,
     );
     await _cameraController!.initialize();
-    if (mounted) setState(() {});
+    await _cameraController!.setZoomLevel(_currentScale);
+    setState(() {});
   }
 
   Future<void> captureImage() async {
     if (_cameraController != null) {
       try {
-        final zoom = _transformationController.value.getMaxScaleOnAxis();
-        await _cameraController!.setZoomLevel(zoom);
+        await _cameraController!.setZoomLevel(_currentScale);
+
+        final image = await _cameraController!.takePicture();
+        final imageBytes = await image.readAsBytes();
+
+        setState(() {
+          _imageFile = image;
+          _imageBytes = imageBytes;
+        });
       } catch (e) {
-        print('Zoom not supported: $e');
+        print('Error capturing image: $e');
       }
-      final image = await _cameraController!.takePicture();
-      final imageBytes = await image.readAsBytes();
-      _resetZoom();
-
-      await _cameraController!.dispose();
-      _cameraController = null;
-
-      setState(() {
-        _imageFile = image;
-        _imageBytes = imageBytes;
-      });
     }
   }
+
 
   Future<void> pickImageFromGallery() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       final imageBytes = await pickedFile.readAsBytes();
-      _resetZoom();
       setState(() {
         _imageFile = XFile(pickedFile.path);
         _imageBytes = imageBytes;
@@ -171,22 +160,24 @@ class _CameraScreenState extends State<CameraScreen> {
         children: [
           // Fullscreen camera preview or selected image
           Positioned.fill(
-            child: _imageBytes == null
+            child: _imageFile == null
                 ? (_cameraController != null && _cameraController!.value.isInitialized
-                ? InteractiveViewer(
-                    transformationController: _transformationController,
-                    minScale: 1.0,
-                    maxScale: 10.0,
-                    child: CameraPreview(_cameraController!),
+                ? GestureDetector(
+              onScaleUpdate: (details) {
+                const double zoomSensitivity = 0.02;
+                final newScale = (_currentScale + (details.scale - 1) * zoomSensitivity).clamp(1.0, 5.0);
+                setState(() {
+                  _currentScale = newScale;
+                });
+                _cameraController!.setZoomLevel(_currentScale);
+              },
+              child: CameraPreview(_cameraController!),
             )
                 : const Center(child: CircularProgressIndicator()))
-                :  Image.memory(
-                  _imageBytes!,
-                  fit: BoxFit.contain,
-                  width: double.infinity,
-                  height: double.infinity,
-                  alignment: Alignment.center,
-            )
+                : Image.memory(
+              _imageBytes!,
+              fit: BoxFit.cover,
+            ),
           ),
 
           Positioned(
@@ -269,10 +260,10 @@ class _CameraScreenState extends State<CameraScreen> {
                     padding: EdgeInsets.only(left: screenWidth * 0.15),
                     child: ElevatedButton(
                       onPressed: () async {
-                        _resetZoom();
                         setState(() {
                           _imageFile = null;
                           _imageBytes = null;
+                          _currentScale = 1.0;
                         });
                         await initializeCamera();
                       },
