@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'camera_screen.dart'; // Import CameraScreen for navigation
 
 class SubscriptionScreen extends StatelessWidget {
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication); // Launch in external browser
+    } catch (e) {
+      print(e);
+      throw 'Could not launch $url'; // Handle error if URL can't be opened
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +27,7 @@ class SubscriptionScreen extends StatelessWidget {
             const Column(
               children: [
                 Text(
-                  "UNLIMITED SEARCHES final",
+                  "UNLIMITED SEARCHES",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -60,7 +70,6 @@ class SubscriptionScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
 
-                // "Try for Free" Button
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to CameraScreen on button press
@@ -146,7 +155,7 @@ class SubscriptionScreen extends StatelessWidget {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () => _launchURL('https://privacy.glamr.us'),
                     child: const Text(
 
                       "Privacy Policy",

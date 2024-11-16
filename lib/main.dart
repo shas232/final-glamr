@@ -1,3 +1,4 @@
+import 'package:final_glamr/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/SubscriptionScreen.dart'; // Import SubscriptionScreen
 
@@ -18,7 +19,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SubscriptionScreen(),
+      routes: {
+        '/': (context) => SplashScreen(),
+        '/home': (context) => SubscriptionScreen(),
+      },
+
     );
   }
 }
