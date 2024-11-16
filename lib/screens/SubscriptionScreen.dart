@@ -5,9 +5,10 @@ import 'camera_screen.dart'; // Import CameraScreen for navigation
 class SubscriptionScreen extends StatelessWidget {
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+    try {
       await launchUrl(uri, mode: LaunchMode.externalApplication); // Launch in external browser
-    } else {
+    } catch (e) {
+      print(e);
       throw 'Could not launch $url'; // Handle error if URL can't be opened
     }
   }
@@ -69,7 +70,6 @@ class SubscriptionScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
 
-                // "Try for Free" Button
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to CameraScreen on button press

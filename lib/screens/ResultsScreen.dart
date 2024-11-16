@@ -16,9 +16,10 @@ class ResultsScreen extends StatelessWidget {
 
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+    try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
+    } catch (e) {
+      print('Could not launch $url $e');
       throw 'Could not launch $url';
     }
   }
