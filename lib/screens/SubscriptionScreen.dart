@@ -17,7 +17,7 @@ class SubscriptionScreen extends StatelessWidget {
             const Column(
               children: [
                 Text(
-                  "UNLIMITED SEARCHES final",
+                  "UNLIMITED SEARCHES",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

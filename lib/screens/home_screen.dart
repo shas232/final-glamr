@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Welcome to Glamr final',
+              'Welcome to Glamr',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
