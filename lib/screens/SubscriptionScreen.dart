@@ -55,6 +55,31 @@ class SubscriptionScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.grey.shade300),
               ),
+              child: Center(
+                child: Image.network(
+                  'https://p1.assets.glamr.us/home_page_animation.gif', // Replace with your actual CDN URL
+                  fit: BoxFit.cover,
+                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) {
+                      // The image is fully loaded
+                      return child;
+                    } else {
+                      // Show a placeholder image or a CircularProgressIndicator while loading
+                      return Image.asset(
+                        'assets/home_screen_animation_preview.png', // Replace with your placeholder image path
+                        fit: BoxFit.cover,
+                      );
+                    }
+                  },
+                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                    // Show a fallback image if there's an error loading the GIF
+                    return Image.asset(
+                      'assets/home_screen_animation_preview.png', // Replace with your error fallback image path
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
+              ),
             ),
 
             // Payment Information and Button
@@ -95,6 +120,7 @@ class SubscriptionScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                       Icon(Icons.celebration, color: Colors.white, size: 20),
