@@ -43,6 +43,7 @@ dependencies:
   webview_flutter: ^4.10.0
   camera_avfoundation: ^0.9.17+5
   flutter_secure_storage: ^9.2.2
+  flutter_native_splash: ^2.4.3
 
 dependency_overriders:
   path_provider_windows: 0.0.0
@@ -64,4 +65,15 @@ flutter:
   assets:
     - .env
     - assets/
+
+flutter_native_splash:
+  # Background image to use for the splash screen
+  background_image: "assets/splash_screen.png"
+  fullscreen: true
+#  fill: true
+  # Android 12 specific settings
+  android_12:
+    # Specify the background color or an image for Android 12 devices
+    image: "assets/splash_screen.png"
+    icon_background_color: "#000000" # Adjust to match your app's theme (optional)
 
