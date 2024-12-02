@@ -31,7 +31,12 @@ class _CameraScreenState extends State<CameraScreen> {
     super.initState();
     initializeCamera();
   }
-
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    _cameraController?.dispose();
+    super.dispose();
+  }
   Future<void> _processAndNavigate() async {
     if (_imageBytes == null) return;
     if (_isProcessing) return;
@@ -83,6 +88,7 @@ class _CameraScreenState extends State<CameraScreen> {
     if (cameras == null || cameras!.length < 2) return;
 
     _selectedCameraIndex = (_selectedCameraIndex + 1) % cameras!.length;
+    _debounceTimer?.cancel();
     await _cameraController?.dispose();
 
     _cameraController = CameraController(
@@ -93,7 +99,9 @@ class _CameraScreenState extends State<CameraScreen> {
 
     try {
       await _cameraController!.initialize();
-      await _cameraController!.setZoomLevel(_currentScale);
+      if (!kIsWeb) {
+        await _cameraController!.setZoomLevel(_currentScale);
+      }
       setState(() {});
     } catch (e) {
       print('Error switching camera: $e');
@@ -103,21 +111,26 @@ class _CameraScreenState extends State<CameraScreen> {
   Future<void> initializeCamera() async {
     cameras = await availableCameras();
     if (cameras!.isEmpty) return;
-
+    _debounceTimer?.cancel();
+    await _cameraController?.dispose();
     _cameraController = CameraController(
       cameras![_selectedCameraIndex],
       ResolutionPreset.max,
       enableAudio: false,
     );
     await _cameraController!.initialize();
-    await _cameraController!.setZoomLevel(_currentScale);
+    if (!kIsWeb) {
+      await _cameraController!.setZoomLevel(_currentScale);
+    }
     setState(() {});
   }
 
   Future<void> captureImage() async {
     if (_cameraController != null) {
       try {
-        await _cameraController!.setZoomLevel(_currentScale);
+        if (!kIsWeb) {
+          await _cameraController!.setZoomLevel(_currentScale);
+        }
 
         final image = await _cameraController!.takePicture();
         final imageBytes = await image.readAsBytes();
@@ -142,12 +155,6 @@ class _CameraScreenState extends State<CameraScreen> {
         _imageBytes = imageBytes;
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _debounceTimer?.cancel();
-    super.dispose();
   }
 
   @override

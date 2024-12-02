@@ -16,12 +16,13 @@ class SubscriptionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
+      body: SingleChildScrollView(
+        child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(height: 60), // Space at the top for layout alignment
+            const SizedBox(height: 112), // Space at the top for layout alignment
 
             // Title and Subtitle
             const Column(
@@ -252,6 +253,7 @@ class SubscriptionScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
