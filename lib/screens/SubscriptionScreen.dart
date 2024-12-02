@@ -45,7 +45,33 @@ class SubscriptionScreen extends StatelessWidget {
                 ),
               ],
             ),
-
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0), // Add spacing around the description
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF7F7F7), // Light grey background
+                  borderRadius: BorderRadius.all(Radius.circular(12)), // Rounded corners
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey, // Shadow color
+                      blurRadius: 4, // Soft blur effect
+                      offset: Offset(0, 2), // Shadow position
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.all(16), // Padding inside the container
+                child: const Text(
+                  "All you have to do is click a picture or upload one of some clothing you want to buy, and we will find the cheapest similar-looking alternatives.",
+                  style: TextStyle(
+                    fontSize: 16, // Slightly larger font size
+                    color: Colors.black87, // Slightly less bold than pure black
+                    fontWeight: FontWeight.w500, // Medium weight
+                    height: 1.5, // Line height for better readability
+                  ),
+                  textAlign: TextAlign.center, // Center align for better visual balance
+                ),
+              ),
+            ),
             // Image Container Placeholder
             Container(
               width: double.infinity,
@@ -85,14 +111,14 @@ class SubscriptionScreen extends StatelessWidget {
             // Payment Information and Button
             Column(
               children: [
-                const Text(
-                  "✓ No payment due now",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
+                // const Text(
+                //   "✓ No payment due now",
+                //   style: TextStyle(
+                //     fontSize: 14,
+                //     fontWeight: FontWeight.bold,
+                //     color: Colors.black,
+                //   ),
+                // ),
                 SizedBox(height: 20),
 
                 ElevatedButton(
@@ -116,7 +142,7 @@ class SubscriptionScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Try for free ",
+                        "Find your best clothing today ",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -130,56 +156,56 @@ class SubscriptionScreen extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 // Subscription Information
-                const Text(
-                  "3 days free, then \$6.99 per week",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
+                // const Text(
+                //   "3 days free, then \$6.99 per week",
+                //   style: TextStyle(
+                //     fontSize: 12,
+                //     color: Colors.grey,
+                //   ),
+                // ),
               ],
             ),
 
             // Footer Links
             Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
+              padding: const EdgeInsets.only(bottom: 24.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      "Terms of use",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    "|",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      "Restore Purchase",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    "|",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
+                  // TextButton(
+                  //   onPressed: () {},
+                  //   child: const Text(
+                  //     "Terms of use",
+                  //     style: TextStyle(
+                  //       color: Colors.grey,
+                  //       fontSize: 12,
+                  //     ),
+                  //   ),
+                  // ),
+                  // const Text(
+                  //   "|",
+                  //   style: TextStyle(
+                  //     color: Colors.grey,
+                  //     fontSize: 12,
+                  //   ),
+                  // ),
+                  // TextButton(
+                  //   onPressed: () {},
+                  //   child: const Text(
+                  //     "Restore Purchase",
+                  //     style: TextStyle(
+                  //       color: Colors.grey,
+                  //       fontSize: 12,
+                  //     ),
+                  //   ),
+                  // ),
+                  // const Text(
+                  //   "|",
+                  //   style: TextStyle(
+                  //     color: Colors.grey,
+                  //     fontSize: 12,
+                  //   ),
+                  // ),
                   TextButton(
                     onPressed: () => _launchURL('https://privacy.glamr.us'),
                     child: const Text(
@@ -187,7 +213,7 @@ class SubscriptionScreen extends StatelessWidget {
                       "Privacy Policy",
                       style: TextStyle(
                         color: Colors.grey,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                     ),
                   ),
