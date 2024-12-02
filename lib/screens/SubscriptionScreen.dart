@@ -43,6 +43,36 @@ class SubscriptionScreen extends StatelessWidget {
                     fontWeight: FontWeight.normal,
                   ),
                 ),
+                SizedBox(height: 16), // Add spacing before the price
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center, // Center align the content
+                  children: [
+                    Text(
+                      "\$88",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.lineThrough, // Cross out the text
+                      ),
+                    ),
+                    SizedBox(width: 8), // Space between the prices
+                    Icon(
+                      Icons.arrow_forward, // Arrow icon pointing to the new price
+                      color: Colors.green,
+                      size: 20,
+                    ),
+                    SizedBox(width: 8), // Space between the arrow and the new price
+                    Text(
+                      "\$6",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
             Padding(
