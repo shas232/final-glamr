@@ -68,12 +68,16 @@ flutter:
 
 flutter_native_splash:
   # Background image to use for the splash screen
-  background_image: "assets/splash_screen.png"
-  fullscreen: true
+  android: true
+  ios: true
+#  background_image: "assets/splash_screen.png"
+  image: "assets/glamr_black_background_splash.png"
+#  fullscreen: true
+  color: "#000000"
 #  fill: true
   # Android 12 specific settings
   android_12:
     # Specify the background color or an image for Android 12 devices
-    image: "assets/splash_screen.png"
+    image: "assets/glamr_black_background_splash.png"
     icon_background_color: "#000000" # Adjust to match your app's theme (optional)
 

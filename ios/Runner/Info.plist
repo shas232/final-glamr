@@ -63,7 +63,7 @@
 		<key>NSLocalNetworkUsageDescription</key>
 		<string>This app needs access to local network for better connectivity</string>
 		<key>UIStatusBarHidden</key>
-		<true/>
+		<false/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
 	</dict>
