@@ -1,259 +1,229 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'camera_screen.dart'; // Import CameraScreen for navigation
+import 'camera_screen.dart';
 
 class SubscriptionScreen extends StatelessWidget {
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
     try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication); // Launch in external browser
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
       print(e);
-      throw 'Could not launch $url'; // Handle error if URL can't be opened
+      throw 'Could not launch $url';
     }
   }
+
   @override
   Widget build(BuildContext context) {
+    // Get screen dimensions
+    final Size screenSize = MediaQuery.of(context).size;
+    final bool isPhone = screenSize.width < 600;
+
+    // Calculate responsive sizes
+    final double titleFontSize = isPhone ? 20 : 32;
+    final double subtitleFontSize = isPhone ? 14 : 22;
+    final double priceFontSize = isPhone ? 18 : 28;
+    final double descriptionFontSize = isPhone ? 16 : 24;
+    final double buttonFontSize = isPhone ? 16 : 24;
+    final double topPadding = screenSize.height * 0.1;
+    final double horizontalPadding = screenSize.width * (isPhone ? 0.04 : 0.1);
+    final double imageHeight = screenSize.height * 0.3;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const SizedBox(height: 112), // Space at the top for layout alignment
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(height: topPadding),
 
-            // Title and Subtitle
-            const Column(
-              children: [
-                Text(
-                  "UNLIMITED SEARCHES",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+              // Title and Subtitle
+              Column(
+                children: [
+                  Text(
+                    "UNLIMITED SEARCHES",
+                    style: TextStyle(
+                      fontSize: titleFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  "Proven to find best prices",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.normal,
+                  SizedBox(height: screenSize.height * 0.01),
+                  Text(
+                    "Proven to find best prices",
+                    style: TextStyle(
+                      fontSize: subtitleFontSize,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
-                ),
-                SizedBox(height: 16), // Add spacing before the price
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center, // Center align the content
-                  children: [
-                    Text(
-                      "\$88",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.lineThrough, // Cross out the text
+                  SizedBox(height: screenSize.height * 0.02),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "\$88",
+                        style: TextStyle(
+                          fontSize: priceFontSize,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.lineThrough,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 8), // Space between the prices
-                    Icon(
-                      Icons.arrow_forward, // Arrow icon pointing to the new price
-                      color: Colors.green,
-                      size: 20,
-                    ),
-                    SizedBox(width: 8), // Space between the arrow and the new price
-                    Text(
-                      "\$6",
-                      style: TextStyle(
-                        fontSize: 18,
+                      SizedBox(width: screenSize.width * 0.02),
+                      Icon(
+                        Icons.arrow_forward,
                         color: Colors.green,
-                        fontWeight: FontWeight.bold,
+                        size: isPhone ? 20 : 26,
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0), // Add spacing around the description
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF7F7F7), // Light grey background
-                  borderRadius: BorderRadius.all(Radius.circular(12)), // Rounded corners
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey, // Shadow color
-                      blurRadius: 4, // Soft blur effect
-                      offset: Offset(0, 2), // Shadow position
-                    ),
-                  ],
-                ),
-                padding: EdgeInsets.all(16), // Padding inside the container
-                child: const Text(
-                  "All you have to do is click a picture or upload one of some clothing you want to buy, and we will find the cheapest similar-looking alternatives.",
-                  style: TextStyle(
-                    fontSize: 16, // Slightly larger font size
-                    color: Colors.black87, // Slightly less bold than pure black
-                    fontWeight: FontWeight.w500, // Medium weight
-                    height: 1.5, // Line height for better readability
+                      SizedBox(width: screenSize.width * 0.02),
+                      Text(
+                        "\$6",
+                        style: TextStyle(
+                          fontSize: priceFontSize,
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  textAlign: TextAlign.center, // Center align for better visual balance
+                ],
+              ),
+
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.02),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: isPhone ? double.infinity : 600,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF7F7F7),
+                    borderRadius: BorderRadius.circular(isPhone ? 12 : 16),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  padding: EdgeInsets.all(screenSize.width * 0.04),
+                  child: Text(
+                    "All you have to do is click a picture or upload one of some clothing you want to buy, and we will find the cheapest similar-looking alternatives.",
+                    style: TextStyle(
+                      fontSize: descriptionFontSize,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
-            ),
-            // Image Container Placeholder
-            Container(
-              width: double.infinity,
-              height: 250,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Center(
-                child: Image.network(
-                  'https://p1.assets.glamr.us/home_page_animation.gif', // Replace with your actual CDN URL
-                  fit: BoxFit.cover,
-                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                    if (loadingProgress == null) {
-                      // The image is fully loaded
-                      return child;
-                    } else {
-                      // Show a placeholder image or a CircularProgressIndicator while loading
+
+              Container(
+                width: double.infinity,
+                height: imageHeight,
+                constraints: BoxConstraints(
+                  maxWidth: isPhone ? double.infinity : 600,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(isPhone ? 16 : 20),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Center(
+                  child: Image.network(
+                    'https://p1.assets.glamr.us/home_page_animation.gif',
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
                       return Image.asset(
-                        'assets/home_screen_animation_preview.png', // Replace with your placeholder image path
+                        'assets/home_screen_animation_preview.png',
                         fit: BoxFit.cover,
                       );
-                    }
-                  },
-                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                    // Show a fallback image if there's an error loading the GIF
-                    return Image.asset(
-                      'assets/home_screen_animation_preview.png', // Replace with your error fallback image path
-                      fit: BoxFit.cover,
-                    );
-                  },
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/home_screen_animation_preview.png',
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
 
-            // Payment Information and Button
-            Column(
-              children: [
-                // const Text(
-                //   "✓ No payment due now",
-                //   style: TextStyle(
-                //     fontSize: 14,
-                //     fontWeight: FontWeight.bold,
-                //     color: Colors.black,
-                //   ),
-                // ),
-                SizedBox(height: 20),
+              SizedBox(height: screenSize.height * 0.03),
 
-                ElevatedButton(
+              Container(
+                constraints: BoxConstraints(
+                  maxWidth: isPhone ? double.infinity : 600,
+                ),
+                child: ElevatedButton(
                   onPressed: () {
-                    // Navigate to CameraScreen on button press
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => CameraScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, // Use backgroundColor instead of primary
-                    padding: EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: Colors.black,
+                    padding: EdgeInsets.symmetric(
+                      vertical: screenSize.height * 0.02,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    minimumSize: Size(double.infinity, 56), // Full-width button
+                    minimumSize: Size(double.infinity, screenSize.height * 0.07),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         "Find your best clothing today ",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: buttonFontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      Icon(Icons.celebration, color: Colors.white, size: 20),
+                      Icon(
+                        Icons.celebration,
+                        color: Colors.white,
+                        size: isPhone ? 20 : 26,
+                      ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 8),
+              ),
 
-                // Subscription Information
-                // const Text(
-                //   "3 days free, then \$6.99 per week",
-                //   style: TextStyle(
-                //     fontSize: 12,
-                //     color: Colors.grey,
-                //   ),
-                // ),
-              ],
-            ),
-
-            // Footer Links
-            Padding(
-              padding: const EdgeInsets.only(bottom: 24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // TextButton(
-                  //   onPressed: () {},
-                  //   child: const Text(
-                  //     "Terms of use",
-                  //     style: TextStyle(
-                  //       color: Colors.grey,
-                  //       fontSize: 12,
-                  //     ),
-                  //   ),
-                  // ),
-                  // const Text(
-                  //   "|",
-                  //   style: TextStyle(
-                  //     color: Colors.grey,
-                  //     fontSize: 12,
-                  //   ),
-                  // ),
-                  // TextButton(
-                  //   onPressed: () {},
-                  //   child: const Text(
-                  //     "Restore Purchase",
-                  //     style: TextStyle(
-                  //       color: Colors.grey,
-                  //       fontSize: 12,
-                  //     ),
-                  //   ),
-                  // ),
-                  // const Text(
-                  //   "|",
-                  //   style: TextStyle(
-                  //     color: Colors.grey,
-                  //     fontSize: 12,
-                  //   ),
-                  // ),
-                  TextButton(
-                    onPressed: () => _launchURL('https://privacy.glamr.us'),
-                    child: const Text(
-
-                      "Privacy Policy",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: screenSize.height * 0.03,
+                  top: screenSize.height * 0.02,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () => _launchURL('https://privacy.glamr.us'),
+                      child: Text(
+                        "Privacy Policy",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: isPhone ? 14 : 16,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
