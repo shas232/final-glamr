@@ -41,14 +41,31 @@ class ResultsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final bool isPhone = screenSize.width < 600;
     final List<Map<String, String>> results = _processSearchResults();
+
+    // Responsive sizes
+    final double capturedImageWidth = isPhone ? 150 : 200;
+    final double capturedImageHeight = isPhone ? 200 : 266;
+    final double resultCardPadding = isPhone ? 12.0 : 16.0;
+    final double resultImageSize = isPhone ? 80 : 120;
+    final double titleFontSize = isPhone ? 16 : 20;
+    final double priceFontSize = isPhone ? 20 : 24;
+    final double sourceFontSize = isPhone ? 14 : 16;
+    final double iconSize = isPhone ? 16 : 20;
+    final double horizontalPadding = screenSize.width * (isPhone ? 0.04 : 0.1);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+            size: isPhone ? 24 : 30,
+          ),
           onPressed: () {
             Navigator.pushReplacement(
               context,
@@ -56,33 +73,37 @@ class ResultsScreen extends StatelessWidget {
             );
           },
         ),
-        title: const Text(
+        title: Text(
           'Best Results',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: isPhone ? 20 : 24,
+          ),
         ),
         centerTitle: true,
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(isPhone ? 16.0 : 24.0),
             child: Center(
               child: Container(
-                width: 150,
-                height: 200,
+                width: capturedImageWidth,
+                height: capturedImageHeight,
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(isPhone ? 16 : 20),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 8,
+                      spreadRadius: isPhone ? 2 : 3,
+                      blurRadius: isPhone ? 8 : 12,
                     ),
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(isPhone ? 16 : 20),
                   child: Image.memory(
                     capturedImage,
                     fit: BoxFit.cover,
@@ -92,21 +113,21 @@ class ResultsScreen extends StatelessWidget {
             ),
           ),
           if (results.isEmpty)
-            const Expanded(
+            Expanded(
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.search_off,
-                      size: 64,
+                      size: isPhone ? 64 : 80,
                       color: Colors.grey,
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: isPhone ? 16 : 24),
                     Text(
                       'No results found',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: isPhone ? 18 : 22,
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,
                       ),
@@ -118,93 +139,103 @@ class ResultsScreen extends StatelessWidget {
           else
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 itemCount: results.length,
                 itemBuilder: (context, index) {
                   final result = results[index];
                   return InkWell(
                     onTap: () => _launchURL(result['link']!),
                     child: Card(
-                      margin: const EdgeInsets.only(bottom: 16.0),
+                      margin: EdgeInsets.only(bottom: isPhone ? 16.0 : 24.0),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(isPhone ? 12.0 : 16.0),
                       ),
-                      elevation: 3,
+                      elevation: isPhone ? 3 : 4,
                       child: Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: EdgeInsets.all(resultCardPadding),
                         child: Row(
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(isPhone ? 8.0 : 12.0),
                               child: Image.network(
                                 result['image']!,
-                                width: 80,
-                                height: 80,
+                                width: resultImageSize,
+                                height: resultImageSize,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
-                                    width: 80,
-                                    height: 80,
+                                    width: resultImageSize,
+                                    height: resultImageSize,
                                     color: Colors.grey[300],
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.image_not_supported,
                                       color: Colors.grey,
+                                      size: resultImageSize * 0.5,
                                     ),
                                   );
                                 },
                                 loadingBuilder: (context, child, loadingProgress) {
                                   if (loadingProgress == null) return child;
                                   return Container(
-                                    width: 80,
-                                    height: 80,
+                                    width: resultImageSize,
+                                    height: resultImageSize,
                                     color: Colors.grey[300],
-                                    child: const Center(
-                                      child: CircularProgressIndicator(),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: isPhone ? 2 : 3,
+                                      ),
                                     ),
                                   );
                                 },
                               ),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(width: isPhone ? 16 : 24),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     result['title']!,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontSize: titleFontSize,
                                     ),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  const SizedBox(height: 4),
+                                  SizedBox(height: isPhone ? 4 : 6),
                                   Row(
                                     children: [
-                                      const Icon(Icons.store, size: 16, color: Colors.black54),
-                                      const SizedBox(width: 4),
+                                      Icon(
+                                        Icons.store,
+                                        size: iconSize,
+                                        color: Colors.black54,
+                                      ),
+                                      SizedBox(width: isPhone ? 4 : 6),
                                       Text(
                                         result['source']!,
-                                        style: const TextStyle(color: Colors.black54),
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: sourceFontSize,
+                                        ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: isPhone ? 8 : 12),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         result['currency']! + result['price']!,
-                                        style: const TextStyle(
-                                          fontSize: 20,
+                                        style: TextStyle(
+                                          fontSize: priceFontSize,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,
                                         ),
                                       ),
-                                      const Icon(
+                                      Icon(
                                         Icons.arrow_forward_ios,
-                                        size: 16,
+                                        size: iconSize,
                                         color: Colors.black54,
                                       ),
                                     ],
