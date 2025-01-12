@@ -159,7 +159,16 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+      final Size screenSize = MediaQuery.of(context).size;
+      final bool isPhone = screenSize.width < 600;
+      final double captureButtonSize = isPhone ? 70 : 90;
+      final double sideButtonSize = isPhone ? 50 : 65;
+      final double iconSize = isPhone ? 30 : 40;
+      final double buttonPadding = isPhone ? 20 : 40;
+      final double bottomBarPadding = screenSize.height * 0.03;
+      final double actionButtonWidth = isPhone ? 100 : 150;
+      final double actionButtonHeight = isPhone ? 45 : 60;
+      final double actionButtonFontSize = isPhone ? 16 : 20;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -188,129 +197,156 @@ class _CameraScreenState extends State<CameraScreen> {
           ),
 
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4), // Semi-transparent overlay
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: _imageFile == null
-                  ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,  // Changed to spaceEvenly
-                children: [
-                  // Gallery button on the left
-                  Container(
-                    width: 50,
-                    margin: const EdgeInsets.only(left: 20),
-                    child: GestureDetector(
-                      onTap: pickImageFromGallery,
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const Icon(
-                          Icons.photo,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  GestureDetector(
-                    onTap: captureImage,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
                     child: Container(
-                      width: 70,
-                      height: 70,
+                      padding: EdgeInsets.symmetric(vertical: bottomBarPadding),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.black, width: 4),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 50,
-                    margin: const EdgeInsets.only(right: 20),
-                    child: !kIsWeb && cameras != null && cameras!.length > 1
-                        ? GestureDetector(
-                      onTap: switchCamera,
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const Icon(
-                          Icons.flip_camera_ios,
-                          color: Colors.white,
-                          size: 30,
+                        color: Colors.black.withOpacity(0.4),
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(isPhone ? 20 : 30)
                         ),
                       ),
-                    )
-                        : const SizedBox(width: 50), // Maintains spacing on web
-                  ),
+                      child: _imageFile == null
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  width: sideButtonSize,
+                                  margin: EdgeInsets.only(left: buttonPadding),
+                                  child: GestureDetector(
+                                    onTap: pickImageFromGallery,
+                                    child: Container(
+                                      width: sideButtonSize,
+                                      height: sideButtonSize,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(isPhone ? 8 : 12),
+                                        border: Border.all(color: Colors.white, width: isPhone ? 2 : 3),
+                                      ),
+                                      child: Icon(
+                                        Icons.photo,
+                                        color: Colors.white,
+                                        size: iconSize,
+                                      ),
+                                    ),
+                                  ),
+                                ),
 
-                ],
-              )
-                  : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: screenWidth * 0.15),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          _imageFile = null;
-                          _imageBytes = null;
-                          _currentScale = 1.0;
-                        });
-                        await initializeCamera();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text("Retake", style: TextStyle(color: Colors.white)),
-                    ),
-                  ),
+                                GestureDetector(
+                                  onTap: captureImage,
+                                  child: Container(
+                                    width: captureButtonSize,
+                                    height: captureButtonSize,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.black,
+                                        width: isPhone ? 4 : 6
+                                      ),
+                                    ),
+                                  ),
+                                ),
 
-                  Padding(
-                    padding: EdgeInsets.only(right: screenWidth * 0.15),
-                    child: ElevatedButton(
-                      onPressed: _isProcessing ? null : _processAndNavigate,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: _isProcessing
-                          ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                          : const Text("Search", style: TextStyle(color: Colors.white)),
+                                Container(
+                                  width: sideButtonSize,
+                                  margin: EdgeInsets.only(right: buttonPadding),
+                                  child: !kIsWeb && cameras != null && cameras!.length > 1
+                                      ? GestureDetector(
+                                          onTap: switchCamera,
+                                          child: Container(
+                                            width: sideButtonSize,
+                                            height: sideButtonSize,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(isPhone ? 8 : 12),
+                                              border: Border.all(color: Colors.white, width: isPhone ? 2 : 3),
+                                            ),
+                                            child: Icon(
+                                              Icons.flip_camera_ios,
+                                              color: Colors.white,
+                                              size: iconSize,
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox(width: sideButtonSize),
+                                ),
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: screenSize.width * (isPhone ? 0.15 : 0.25)),
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        _imageFile = null;
+                                        _imageBytes = null;
+                                        _currentScale = 1.0;
+                                      });
+                                      await initializeCamera();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.black,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: isPhone ? 30 : 40,
+                                        vertical: isPhone ? 12 : 16
+                                      ),
+                                      minimumSize: Size(actionButtonWidth, actionButtonHeight),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(isPhone ? 8 : 12),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "Retake",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: actionButtonFontSize
+                                      )
+                                    ),
+                                  ),
+                                ),
+
+                                Padding(
+                                  padding: EdgeInsets.only(right: screenSize.width * (isPhone ? 0.15 : 0.25)),
+                                  child: ElevatedButton(
+                                    onPressed: _isProcessing ? null : _processAndNavigate,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.black,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: isPhone ? 30 : 40,
+                                        vertical: isPhone ? 12 : 16
+                                      ),
+                                      minimumSize: Size(actionButtonWidth, actionButtonHeight),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(isPhone ? 8 : 12),
+                                      ),
+                                    ),
+                                    child: _isProcessing
+                                        ? SizedBox(
+                                            width: isPhone ? 20 : 25,
+                                            height: isPhone ? 20 : 25,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: isPhone ? 2 : 3
+                                            ),
+                                          )
+                                        : Text(
+                                            "Search",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: actionButtonFontSize
+                                            )
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            ),
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+            );
+          }
 }
