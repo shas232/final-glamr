@@ -174,6 +174,25 @@ class _CameraScreenState extends State<CameraScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 10, // Accounts for status bar
+            left: 16,
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
+                  size: isPhone ? 24 : 30,
+                ),
+              ),
+            ),
+          ),
           // Fullscreen camera preview or selected image
           Positioned.fill(
             child: _imageFile == null

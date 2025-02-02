@@ -43,12 +43,13 @@ class SubscriptionScreen extends StatelessWidget {
               Column(
                 children: [
                   Text(
-                    "UNLIMITED SEARCHES",
+                    "FIND THE CHEAPEST ALTERNATIVE",
                     style: TextStyle(
                       fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: screenSize.height * 0.01),
                   Text(
@@ -59,36 +60,36 @@ class SubscriptionScreen extends StatelessWidget {
                       fontWeight: FontWeight.normal,
                     ),
                   ),
-                  SizedBox(height: screenSize.height * 0.02),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "\$88",
-                        style: TextStyle(
-                          fontSize: priceFontSize,
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      ),
-                      SizedBox(width: screenSize.width * 0.02),
-                      Icon(
-                        Icons.arrow_forward,
-                        color: Colors.green,
-                        size: isPhone ? 20 : 26,
-                      ),
-                      SizedBox(width: screenSize.width * 0.02),
-                      Text(
-                        "\$6",
-                        style: TextStyle(
-                          fontSize: priceFontSize,
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // SizedBox(height: screenSize.height * 0.02),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Text(
+                  //       "\$88",
+                  //       style: TextStyle(
+                  //         fontSize: priceFontSize,
+                  //         color: Colors.red,
+                  //         fontWeight: FontWeight.bold,
+                  //         decoration: TextDecoration.lineThrough,
+                  //       ),
+                  //     ),
+                  //     SizedBox(width: screenSize.width * 0.02),
+                  //     Icon(
+                  //       Icons.arrow_forward,
+                  //       color: Colors.green,
+                  //       size: isPhone ? 20 : 26,
+                  //     ),
+                  //     SizedBox(width: screenSize.width * 0.02),
+                  //     Text(
+                  //       "\$6",
+                  //       style: TextStyle(
+                  //         fontSize: priceFontSize,
+                  //         color: Colors.green,
+                  //         fontWeight: FontWeight.bold,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
 
@@ -111,7 +112,7 @@ class SubscriptionScreen extends StatelessWidget {
                   ),
                   padding: EdgeInsets.all(screenSize.width * 0.04),
                   child: Text(
-                    "All you have to do is click a picture or upload one of some clothing you want to buy, and we will find the cheapest similar-looking alternatives.",
+                    "All you have to do is click a picture or upload one of some clothing you want to buy, and we will show you the cheapest similar-looking alternatives.",
                     style: TextStyle(
                       fontSize: descriptionFontSize,
                       color: Colors.black87,
@@ -213,8 +214,8 @@ class SubscriptionScreen extends StatelessWidget {
                       child: Text(
                         "Privacy Policy",
                         style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: isPhone ? 14 : 16,
+                          color: Colors.black,
+                          fontSize: isPhone ? 18 : 24,
                         ),
                       ),
                     ),
