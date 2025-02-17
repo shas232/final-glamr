@@ -211,7 +211,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 : const Center(child: CircularProgressIndicator()))
                 : Image.memory(
               _imageBytes!,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           ),
 
