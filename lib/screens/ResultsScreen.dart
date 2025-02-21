@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:final_glamr/screens/SubscriptionScreen.dart';
-import 'package:final_glamr/screens/home_screen.dart';
 import 'dart:typed_data';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,7 +25,6 @@ class ResultsScreen extends StatelessWidget {
 
   List<Map<String, String>> _processSearchResults() {
     List<dynamic> products = searchResults['search_options'] ?? [];
-
     return products.map<Map<String, String>>((product) {
       return {
         'image': product['image'] ?? 'https://via.placeholder.com/150',
@@ -49,7 +47,9 @@ class ResultsScreen extends StatelessWidget {
     final double capturedImageWidth = isPhone ? 150 : 200;
     final double capturedImageHeight = isPhone ? 200 : 266;
     final double resultCardPadding = isPhone ? 12.0 : 16.0;
-    final double resultImageSize = isPhone ? 80 : 120;
+    // We'll update the resultImageSize to be bigger
+    // and use the same value for both image and text column height
+    final double updatedResultImageSize = isPhone ? 100 : 140;
     final double titleFontSize = isPhone ? 16 : 20;
     final double priceFontSize = isPhone ? 20 : 24;
     final double sourceFontSize = isPhone ? 14 : 16;
@@ -57,9 +57,10 @@ class ResultsScreen extends StatelessWidget {
     final double horizontalPadding = screenSize.width * (isPhone ? 0.04 : 0.1);
 
     return Scaffold(
+      backgroundColor: Colors.white, // White background for a clean look
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 1,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -146,39 +147,45 @@ class ResultsScreen extends StatelessWidget {
                   return InkWell(
                     onTap: () => _launchURL(result['link']!),
                     child: Card(
+                      color: Color(0xFFF2F3F3),
                       margin: EdgeInsets.only(bottom: isPhone ? 16.0 : 24.0),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(isPhone ? 12.0 : 16.0),
+                        borderRadius:
+                            BorderRadius.circular(isPhone ? 12.0 : 16.0),
                       ),
                       elevation: isPhone ? 3 : 4,
                       child: Padding(
                         padding: EdgeInsets.all(resultCardPadding),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Updated bigger product image
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(isPhone ? 8.0 : 12.0),
+                              borderRadius:
+                                  BorderRadius.circular(isPhone ? 8.0 : 12.0),
                               child: Image.network(
                                 result['image']!,
-                                width: resultImageSize,
-                                height: resultImageSize,
+                                width: updatedResultImageSize,
+                                height: updatedResultImageSize,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
-                                    width: resultImageSize,
-                                    height: resultImageSize,
+                                    width: updatedResultImageSize,
+                                    height: updatedResultImageSize,
                                     color: Colors.grey[300],
                                     child: Icon(
                                       Icons.image_not_supported,
                                       color: Colors.grey,
-                                      size: resultImageSize * 0.5,
+                                      size: updatedResultImageSize * 0.5,
                                     ),
                                   );
                                 },
-                                loadingBuilder: (context, child, loadingProgress) {
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
                                   if (loadingProgress == null) return child;
                                   return Container(
-                                    width: resultImageSize,
-                                    height: resultImageSize,
+                                    width: updatedResultImageSize,
+                                    height: updatedResultImageSize,
                                     color: Colors.grey[300],
                                     child: Center(
                                       child: CircularProgressIndicator(
@@ -190,57 +197,74 @@ class ResultsScreen extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: isPhone ? 16 : 24),
+                            // Text column with fixed height matching the image
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    result['title']!,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: titleFontSize,
+                              child: Container(
+                                height: updatedResultImageSize,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    // Title and source at the top
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          result['title']!,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: titleFontSize,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(
+                                            height: isPhone ? 4 : 6),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.store,
+                                              size: iconSize,
+                                              color: Colors.black54,
+                                            ),
+                                            SizedBox(
+                                                width: isPhone ? 4 : 6),
+                                            Text(
+                                              result['source']!,
+                                              style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: sourceFontSize,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  SizedBox(height: isPhone ? 4 : 6),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.store,
-                                        size: iconSize,
-                                        color: Colors.black54,
-                                      ),
-                                      SizedBox(width: isPhone ? 4 : 6),
-                                      Text(
-                                        result['source']!,
-                                        style: TextStyle(
+                                    // Price and arrow at the bottom
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          result['currency']! +
+                                              result['price']!,
+                                          style: TextStyle(
+                                            fontSize: priceFontSize,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: iconSize,
                                           color: Colors.black54,
-                                          fontSize: sourceFontSize,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: isPhone ? 8 : 12),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        result['currency']! + result['price']!,
-                                        style: TextStyle(
-                                          fontSize: priceFontSize,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: iconSize,
-                                        color: Colors.black54,
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],

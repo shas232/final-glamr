@@ -16,3 +16,7 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 Important for Creating Podfile
 ```flutter pub add flutter_secure_storage```
+```sudo gem install cocoapods```
+```flutter pub get```
+```brew install ruby```
+```open Runner.xcworkspace```

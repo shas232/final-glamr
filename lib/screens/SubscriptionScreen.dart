@@ -43,7 +43,7 @@ class SubscriptionScreen extends StatelessWidget {
               Column(
                 children: [
                   Text(
-                    "FIND THE CHEAPEST ALTERNATIVE",
+                    "FIND THE CHEAPEST ALTERNATIVE 1",
                     style: TextStyle(
                       fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,
