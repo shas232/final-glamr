@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'camera_screen.dart';
+import 'UserInfoScreen.dart';
 
 class SubscriptionScreen extends StatelessWidget {
   Future<void> _launchURL(String url) async {
@@ -166,7 +167,7 @@ class SubscriptionScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CameraScreen()),
+                      MaterialPageRoute(builder: (context) => UserInfoScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
