@@ -238,7 +238,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 ? _buildCameraPreview()
                 : Image.memory(
                     _imageBytes!,
-                    fit: BoxFit.cover, // fill the screen for captured image
+                    fit: BoxFit.contain, // fill the screen for captured image
                   ),
           ),
 
