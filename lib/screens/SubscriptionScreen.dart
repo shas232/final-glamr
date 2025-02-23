@@ -44,7 +44,7 @@ class SubscriptionScreen extends StatelessWidget {
               Column(
                 children: [
                   Text(
-                    "FIND THE CHEAPEST ALTERNATIVE 1",
+                    "FIND THE CHEAPEST ALTERNATIVE",
                     style: TextStyle(
                       fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,
@@ -167,7 +167,7 @@ class SubscriptionScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => UserInfoScreen()),
+                      MaterialPageRoute(builder: (context) => CameraScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
