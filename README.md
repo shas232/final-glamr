@@ -1,6 +1,6 @@
 # final_glamr
 
-A new Flutter project.
+A new Flutter project
 
 ## Getting Started
 
@@ -20,3 +20,5 @@ Important for Creating Podfile
 ```flutter pub get```
 ```brew install ruby```
 ```open Runner.xcworkspace```
+
+added paywall
