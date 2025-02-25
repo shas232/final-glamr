@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'camera_screen.dart';
 import 'UserInfoScreen.dart';
 
 class SubscriptionScreen extends StatelessWidget {
@@ -44,7 +43,7 @@ class SubscriptionScreen extends StatelessWidget {
               Column(
                 children: [
                   Text(
-                    "FIND THE CHEAPEST ALTERNATIVE 1",
+                    "FIND THE CHEAPEST ALTERNATIVE",
                     style: TextStyle(
                       fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,

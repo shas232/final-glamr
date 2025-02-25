@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'camera_screen.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import '../services/purchases_service.dart';
 
 class FashionBrandsScreen extends StatefulWidget {
   @override
@@ -10,14 +12,14 @@ class _FashionBrandsScreenState extends State<FashionBrandsScreen> {
   Set<String> selectedBrands = {};
 
   final List<Map<String, String>> brands = [
-    {'name': 'Lululemon', 'logo': 'assets/brands/lululemon.png'},
-    {'name': 'Skims', 'logo': 'assets/brands/skims.png'},
-    {'name': 'Gymshark', 'logo': 'assets/brands/gymshark.png'},
-    {'name': 'Alo', 'logo': 'assets/brands/alo.png'},
-    {'name': 'Gap', 'logo': 'assets/brands/gap.png'},
-    {'name': 'Nike', 'logo': 'assets/brands/nike.png'},
-    {'name': 'Zara', 'logo': 'assets/brands/zara.png'},
-    {'name': 'Uniqlo', 'logo': 'assets/brands/uniqlo.jpeg'},
+    {'name': 'Lululemon', 'logo': 'assets/lululemon.png'},
+    {'name': 'Skims', 'logo': 'assets/skims.png'},
+    {'name': 'Gymshark', 'logo': 'assets/gymshark.png'},
+    {'name': 'Alo', 'logo': 'assets/alo.png'},
+    {'name': 'Gap', 'logo': 'assets/gap.png'},
+    {'name': 'Nike', 'logo': 'assets/nike.png'},
+    {'name': 'Zara', 'logo': 'assets/zara.png'},
+    {'name': 'Uniqlo', 'logo': 'assets/uniqlo.jpeg'},
   ];
 
   @override
@@ -95,7 +97,6 @@ class _FashionBrandsScreenState extends State<FashionBrandsScreen> {
                             Image.asset(
                               brand['logo']!,
                               height: isPhone ? 40 : 50,
-                              color: isSelected ? Colors.white : Colors.black,
                             ),
                             SizedBox(height: 8),
                             Text(
@@ -116,13 +117,9 @@ class _FashionBrandsScreenState extends State<FashionBrandsScreen> {
               SizedBox(height: 20),
               Container(
                 width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CameraScreen()),
-                    );
-                  },
+                  onPressed: _handleContinue,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     padding: EdgeInsets.symmetric(vertical: 16),
@@ -145,4 +142,147 @@ class _FashionBrandsScreenState extends State<FashionBrandsScreen> {
       ),
     );
   }
-} 
+
+  Future<void> _handleContinue() async {
+    if (selectedBrands.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select at least one brand')),
+      );
+      return;
+    }
+
+    try {
+      final offerings = await PurchasesService.getOfferings();
+      
+      if (offerings == null || offerings.current == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unable to load subscription options')),
+        );
+        return;
+      }
+
+      final packages = offerings.current!.availablePackages;
+      if (packages.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Subscription package not available')),
+        );
+        return;
+      }
+
+      final package = packages.first;
+
+      try {
+        CustomerInfo? purchaseResult = await PurchasesService.purchasePackage(package);
+        
+        if (purchaseResult != null && purchaseResult.entitlements.all['pro']?.isActive == true) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => CameraScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Purchase was not completed. Please try again.')),
+          );
+        }
+      } catch (purchaseError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unable to complete purchase. Please try again.')),
+        );
+      }
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to load subscription options')),
+      );
+    }
+  }
+}
+
+class PaywallSheet extends StatelessWidget {
+  final Package package;
+  final VoidCallback onSuccess;
+
+  const PaywallSheet({
+    required this.package,
+    required this.onSuccess,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final isPhone = MediaQuery.of(context).size.width < 600;
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Unlock Premium',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isPhone ? 24 : 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.close, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildFeatureItem('✨ Unlimited style matches'),
+                  _buildFeatureItem('🔍 Detailed product recommendations'),
+                  _buildFeatureItem('💫 Priority access to new features'),
+                  _buildFeatureItem('🎯 Personalized style suggestions'),
+                  SizedBox(height: 32),
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        final customerInfo = await PurchasesService.purchasePackage(package);
+                        if (customerInfo != null && customerInfo.entitlements.active.isNotEmpty) {
+                          onSuccess();
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Purchase failed. Please try again.')),
+                        );
+                      }
+                    },
+                    child: Text('Start Free Trial'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureItem(String text) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Text(text, style: TextStyle(fontSize: 18)),
+    );
+  }
+}
