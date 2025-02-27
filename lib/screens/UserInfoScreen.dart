@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-
-import 'FashionBrandsScreen.dart';
+import 'SelectAgeScreen.dart';
 
 class UserInfoScreen extends StatefulWidget {
   @override
@@ -10,20 +8,20 @@ class UserInfoScreen extends StatefulWidget {
 
 class _UserInfoScreenState extends State<UserInfoScreen> {
   final TextEditingController _nameController = TextEditingController();
-  String? selectedState;
 
-  final List<String> states = [
-    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
-    'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
-    'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa',
-    'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland',
-    'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri',
-    'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey',
-    'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio',
-    'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina',
-    'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-    'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _nameController.addListener(() {
+      setState(() {});  // Rebuild UI when text changes
+    });
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +29,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
     final bool isPhone = screenSize.width < 600;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -38,137 +37,94 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
+        
+        centerTitle: true,
       ),
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          // Adjust horizontal padding based on screen size
-          padding: EdgeInsets.symmetric(
-            horizontal: screenSize.width * (isPhone ? 0.04 : 0.1),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10), 
-              Text(
-                "Tell us about yourself",
-                style: TextStyle(
-                  fontSize: isPhone ? 24 : 32,
-                  fontWeight: FontWeight.bold,
-                ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 20),
+            Text(
+              "What is your first name?",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
-              SizedBox(height: 40),
-
-              // First bar (TextField)
-              TextField(
+            ),
+            SizedBox(height: 32),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    spreadRadius: 0,
+                    blurRadius: 10,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: TextField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'What is your first name?',
-                  labelStyle: TextStyle(color: Colors.grey[600]),
+                  hintText: 'Sara',
+                  hintStyle: TextStyle(
+                    color: Colors.grey[400],
+                    fontSize: 16,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  floatingLabelStyle: TextStyle(color: Colors.grey[600]),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
               ),
-              SizedBox(height: 30),
-
-              // Second bar (Dropdown)
-              Container(
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton2<String>(
-                    isExpanded: true,
-                    hint: Text(
-                      'Which state do you live in?',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    items: states.map((String state) {
-                      return DropdownMenuItem<String>(
-                        value: state,
-                        child: Text(
-                          state,
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                        ),
-                      );
-                    }).toList(),
-                    value: selectedState,
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedState = value;
-                      });
-                    },
-                    buttonStyleData: ButtonStyleData(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey[300]!),
-                        color: Colors.white,
-                      ),
-                    ),
-                    // Important: Set offset to (0, 0) so the dropdown anchors correctly
-                    dropdownStyleData: DropdownStyleData(
-                      maxHeight: 300,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white,
-                      ),
-                      offset: const Offset(0, 0),  // <-- Drop-down directly under button
-                      width: screenSize.width * (isPhone ? 0.92 : 0.8),
-                    ),
-                    menuItemStyleData: MenuItemStyleData(
-                      height: 48,
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                    iconStyleData: IconStyleData(
-                      icon: Icon(Icons.arrow_drop_down),
-                      iconSize: 24,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 40),
-
-              // Continue button
-              Container(
+            ),
+            Spacer(),
+            Padding(
+              padding: EdgeInsets.only(bottom: 40),
+              child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Only continue if name and state are not empty
-                    if (_nameController.text.isNotEmpty && selectedState != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FashionBrandsScreen(),
-                        ),
-                      );
-                    }
-                  },
+                  onPressed: _nameController.text.isNotEmpty
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SelectAgeScreen(),
+                            ),
+                          );
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     padding: EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
+                    disabledBackgroundColor: Colors.grey[300],
                   ),
                   child: Text(
                     "Continue",
                     style: TextStyle(
-                      fontSize: isPhone ? 16 : 24,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

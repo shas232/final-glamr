@@ -16,8 +16,9 @@ class PurchasesService {
   static Future<bool> checkProAccess() async {
     try {
       CustomerInfo customerInfo = await Purchases.getCustomerInfo();
-      return customerInfo.entitlements.active.containsKey(entitlementId);
+      return customerInfo.entitlements.all['pro']?.isActive == true;
     } catch (e) {
+      print('Error checking pro access: $e');
       return false;
     }
   }

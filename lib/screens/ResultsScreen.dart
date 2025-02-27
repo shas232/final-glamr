@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:final_glamr/screens/SubscriptionScreen.dart';
 import 'dart:typed_data';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:final_glamr/screens/camera_screen.dart';
 
 class ResultsScreen extends StatelessWidget {
   final Uint8List capturedImage;
@@ -70,7 +71,7 @@ class ResultsScreen extends StatelessWidget {
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => SubscriptionScreen()),
+              MaterialPageRoute(builder: (context) => CameraScreen()),
             );
           },
         ),

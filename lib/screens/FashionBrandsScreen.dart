@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'camera_screen.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import '../services/purchases_service.dart';
+import 'PaymentScreen.dart';
 
 class FashionBrandsScreen extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class _FashionBrandsScreenState extends State<FashionBrandsScreen> {
   final List<Map<String, String>> brands = [
     {'name': 'Lululemon', 'logo': 'assets/lululemon.png'},
     {'name': 'Skims', 'logo': 'assets/skims.png'},
-    {'name': 'Gymshark', 'logo': 'assets/gymshark.png'},
+    {'name': 'Gymshark', 'logo': 'assets/Gymshark.png'},
     {'name': 'Alo', 'logo': 'assets/alo.png'},
     {'name': 'Gap', 'logo': 'assets/gap.png'},
     {'name': 'Nike', 'logo': 'assets/nike.png'},
@@ -48,20 +49,14 @@ class _FashionBrandsScreenState extends State<FashionBrandsScreen> {
             children: [
               SizedBox(height: 10),
               Text(
-                "Select your favorite fashion brands",
+                "Select brands you like",
                 style: TextStyle(
-                  fontSize: isPhone ? 24 : 32,
+                  fontSize: isPhone ? 28 : 40,
                   fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
-              SizedBox(height: 20),
-              Text(
-                "Choose as many as you like",
-                style: TextStyle(
-                  fontSize: isPhone ? 16 : 20,
-                  color: Colors.grey,
-                ),
-              ),
+              
               SizedBox(height: 30),
               Expanded(
                 child: GridView.builder(
@@ -87,27 +82,31 @@ class _FashionBrandsScreenState extends State<FashionBrandsScreen> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.black : Colors.white,
-                          border: Border.all(color: Colors.black),
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              brand['logo']!,
-                              height: isPhone ? 40 : 50,
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              brand['name']!,
-                              style: TextStyle(
-                                color: isSelected ? Colors.white : Colors.black,
-                                fontSize: isPhone ? 14 : 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          border: Border.all(
+                            color: isSelected ? Colors.black : Colors.transparent,
+                            width: 2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              spreadRadius: 0,
+                              blurRadius: 10,
+                              offset: Offset(0, 2),
                             ),
                           ],
+                        ),
+                        child: Center(
+                          child: Container(
+                            width: isPhone ? 120 : 140,
+                            height: isPhone ? 120 : 140,
+                            padding: EdgeInsets.all(25),
+                            child: Image.asset(
+                              brand['logo']!,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                         ),
                       ),
                     );
@@ -151,50 +150,10 @@ class _FashionBrandsScreenState extends State<FashionBrandsScreen> {
       return;
     }
 
-    try {
-      final offerings = await PurchasesService.getOfferings();
-      
-      if (offerings == null || offerings.current == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unable to load subscription options')),
-        );
-        return;
-      }
-
-      final packages = offerings.current!.availablePackages;
-      if (packages.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Subscription package not available')),
-        );
-        return;
-      }
-
-      final package = packages.first;
-
-      try {
-        CustomerInfo? purchaseResult = await PurchasesService.purchasePackage(package);
-        
-        if (purchaseResult != null && purchaseResult.entitlements.all['pro']?.isActive == true) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => CameraScreen()),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Purchase was not completed. Please try again.')),
-          );
-        }
-      } catch (purchaseError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unable to complete purchase. Please try again.')),
-        );
-      }
-
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to load subscription options')),
-      );
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PaymentScreen()),
+    );
   }
 }
 
