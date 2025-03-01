@@ -22,3 +22,27 @@ Important for Creating Podfile
 ```open Runner.xcworkspace```
 
 added paywall
+https://privacy.glamr.us 
+
+
+
+
+
+home: FutureBuilder<bool>(
+        future: PurchasesService.checkProAccess(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          
+          // If user has pro access, go directly to camera
+          if (snapshot.data == true) {
+            return CameraScreen();
+          }
+          
+          // Otherwise show normal onboarding flow
+          return SubscriptionScreen();
+        },
+      ),
+
+      25-40

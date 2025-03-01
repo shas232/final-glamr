@@ -55,10 +55,9 @@ class _CameraScreenState extends State<CameraScreen> {
 
       await _apiService.uploadImageToS3(uploadUrl, _imageBytes!);
       final searchResults = await _apiService.searchOptions(s3Key);
+      if (!mounted) return;  // Keep this check
 
-      if (mounted) Navigator.of(context).pop();
-      if (!mounted) return;
-
+      // Replace both pop and push with a single pushReplacement
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -69,16 +68,17 @@ class _CameraScreenState extends State<CameraScreen> {
         ),
       );
     } catch (e) {
-      if (mounted) Navigator.of(context).pop();
-      if (!mounted) return;
+      if (!mounted) return;  // Keep this check
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
       );
     } finally {
-      setState(() {
-        _isProcessing = false;
-      });
+      if (mounted) { // Add a check here too
+        setState(() {
+          _isProcessing = false;
+        });
+      }
     }
   }
 
@@ -238,7 +238,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 ? _buildCameraPreview()
                 : Image.memory(
                     _imageBytes!,
-                    fit: BoxFit.cover, // fill the screen for captured image
+                    fit: BoxFit.contain, // fill the screen for captured image
                   ),
           ),
 
